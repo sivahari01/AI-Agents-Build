@@ -1,0 +1,267 @@
+{
+  "created_at": "2026-11-04T20:24:59",
+  "scenario": "ConCurrent_Fetch",
+  "report": {
+    "report_type": "NeoLoad",
+    "scenario_name": "ConCurrent_Fetch",
+    "project": "OpenCart",
+    "status": "Passed",
+    "start_time": "Jun 2, 2024, 8:03:22 PM",
+    "end_time": "Jun 2, 2024, 8:05:24 PM",
+    "duration_seconds": 121.0,
+    "max_virtual_users": 10,
+    "total_virtual_users_launched": 10,
+    "total_iterations_completed": 0,
+    "total_transactions": 50,
+    "total_requests": 70,
+    "failed_transactions": 0,
+    "error_rate_pct": 0,
+    "average_tps": 0.6,
+    "average_response_time_s": 0.901,
+    "total_throughput_mb": 0.94,
+    "average_throughput_mbps": 0.06,
+    "transactions": [
+      {
+        "name": "AC_creation",
+        "execution_count": 10,
+        "min_response_time_s": 9.15,
+        "avg_response_time_s": 9.47,
+        "max_response_time_s": 9.8,
+        "p95_response_time_s": null,
+        "p99_response_time_s": null,
+        "error_count": 10,
+        "error_pct": 100,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Init",
+        "execution_count": 10,
+        "min_response_time_s": 0,
+        "avg_response_time_s": 0.002,
+        "max_response_time_s": 0.007,
+        "p95_response_time_s": null,
+        "p99_response_time_s": null,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Start",
+        "execution_count": 10,
+        "min_response_time_s": 1.13,
+        "avg_response_time_s": 1.26,
+        "max_response_time_s": 1.49,
+        "p95_response_time_s": 1.49,
+        "p99_response_time_s": 1.49,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "login",
+        "execution_count": 10,
+        "min_response_time_s": 1.48,
+        "avg_response_time_s": 1.89,
+        "max_response_time_s": 2.23,
+        "p95_response_time_s": 2.23,
+        "p99_response_time_s": 2.23,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "End",
+        "execution_count": 10,
+        "min_response_time_s": 0,
+        "avg_response_time_s": 0,
+        "max_response_time_s": 0,
+        "p95_response_time_s": null,
+        "p99_response_time_s": null,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      }
+    ],
+    "raw_source_files": [
+      "summary/index.html",
+      "summary/index_files/Main graphs_errors.html",
+      "summary/index_files/Main graphs_hits.html",
+      "summary/index_files/Main graphs_pages.average.html",
+      "summary/index_files/Main graphs_pages.average.vu.html",
+      "summary/index_files/Main graphs_percentile.html",
+      "summary/index_files/Main graphs_requests.average.html",
+      "summary/index_files/Main graphs_throughput.html",
+      "summary/index_files/Main graphs_transactions.average.html",
+      "summary/index_files/medias.html",
+      "summary/index_files/monitors.html",
+      "summary/index_files/pages.html",
+      "summary/index_files/populations.html",
+      "summary/index_files/pushmessages.html",
+      "summary/index_files/scenario_ConCurrent_Fetch.html",
+      "summary/index_files/servers.html",
+      "summary/index_files/settings.html",
+      "summary/index_files/sla-details-results-per-vu.html",
+      "summary/index_files/sla-profiles-details.html",
+      "summary/index_files/summary.html",
+      "summary/index_files/transactions.html",
+      "summary/index_files/virtual-users.html"
+    ]
+  },
+  "analysis": {
+    "thresholds": {
+      "error_pct": 5.0,
+      "response_time_s": 3.0,
+      "tps_drop_pct": 25.0
+    },
+    "findings": [
+      {
+        "category": "response_time",
+        "severity": "high",
+        "transaction": "AC_creation",
+        "evidence": "Average response time is 9.47 seconds."
+      },
+      {
+        "category": "errors",
+        "severity": "high",
+        "transaction": "AC_creation",
+        "evidence": "100% (10 of 10) executions failed."
+      }
+    ],
+    "bottlenecks": [
+      {
+        "issue": "High error rate in AC_creation",
+        "severity": "high",
+        "supporting_metrics": "Error rate 100% (10 failures)",
+        "time_window": "Entire test run",
+        "possible_root_cause": "Application, assertion, or dependency failures require transaction-level investigation.",
+        "recommendation": "Inspect NeoLoad assertion/error details and application logs for this transaction.",
+        "corrective_action": "Fix the failed requests or assertions; retest with the same load profile.",
+        "confidence": "potential"
+      }
+    ],
+    "slowest_transactions": [
+      {
+        "name": "AC_creation",
+        "execution_count": 10,
+        "min_response_time_s": 9.15,
+        "avg_response_time_s": 9.47,
+        "max_response_time_s": 9.8,
+        "p95_response_time_s": null,
+        "p99_response_time_s": null,
+        "error_count": 10,
+        "error_pct": 100,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "login",
+        "execution_count": 10,
+        "min_response_time_s": 1.48,
+        "avg_response_time_s": 1.89,
+        "max_response_time_s": 2.23,
+        "p95_response_time_s": 2.23,
+        "p99_response_time_s": 2.23,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Start",
+        "execution_count": 10,
+        "min_response_time_s": 1.13,
+        "avg_response_time_s": 1.26,
+        "max_response_time_s": 1.49,
+        "p95_response_time_s": 1.49,
+        "p99_response_time_s": 1.49,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Init",
+        "execution_count": 10,
+        "min_response_time_s": 0,
+        "avg_response_time_s": 0.002,
+        "max_response_time_s": 0.007,
+        "p95_response_time_s": null,
+        "p99_response_time_s": null,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "End",
+        "execution_count": 10,
+        "min_response_time_s": 0,
+        "avg_response_time_s": 0,
+        "max_response_time_s": 0,
+        "p95_response_time_s": null,
+        "p99_response_time_s": null,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      }
+    ],
+    "transactions_with_most_errors": [
+      {
+        "name": "AC_creation",
+        "execution_count": 10,
+        "min_response_time_s": 9.15,
+        "avg_response_time_s": 9.47,
+        "max_response_time_s": 9.8,
+        "p95_response_time_s": null,
+        "p99_response_time_s": null,
+        "error_count": 10,
+        "error_pct": 100,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Init",
+        "execution_count": 10,
+        "min_response_time_s": 0,
+        "avg_response_time_s": 0.002,
+        "max_response_time_s": 0.007,
+        "p95_response_time_s": null,
+        "p99_response_time_s": null,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Start",
+        "execution_count": 10,
+        "min_response_time_s": 1.13,
+        "avg_response_time_s": 1.26,
+        "max_response_time_s": 1.49,
+        "p95_response_time_s": 1.49,
+        "p99_response_time_s": 1.49,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "login",
+        "execution_count": 10,
+        "min_response_time_s": 1.48,
+        "avg_response_time_s": 1.89,
+        "max_response_time_s": 2.23,
+        "p95_response_time_s": 2.23,
+        "p99_response_time_s": 2.23,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "End",
+        "execution_count": 10,
+        "min_response_time_s": 0,
+        "avg_response_time_s": 0,
+        "max_response_time_s": 0,
+        "p95_response_time_s": null,
+        "p99_response_time_s": null,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      }
+    ]
+  }
+}

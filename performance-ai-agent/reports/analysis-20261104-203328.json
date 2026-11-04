@@ -1,0 +1,645 @@
+{
+  "created_at": "2026-11-04T20:33:28",
+  "scenario": "Sanity Test",
+  "report": {
+    "report_type": "NeoLoad",
+    "scenario_name": "Sanity Test",
+    "project": "OpenCart",
+    "status": "Passed",
+    "start_time": "May 26, 2024, 12:03:06 AM",
+    "end_time": "May 26, 2024, 12:08:07 AM",
+    "duration_seconds": 301.0,
+    "max_virtual_users": 40,
+    "total_virtual_users_launched": 40,
+    "total_iterations_completed": 39,
+    "total_transactions": 169,
+    "total_requests": 653,
+    "failed_transactions": 99,
+    "error_rate_pct": 15.2,
+    "average_tps": 2.2,
+    "average_response_time_s": 0.732,
+    "total_throughput_mb": 1.55,
+    "average_throughput_mbps": 0.04,
+    "transactions": [
+      {
+        "name": "launch",
+        "execution_count": 5,
+        "min_response_time_s": 1.29,
+        "avg_response_time_s": 2.14,
+        "max_response_time_s": 3.44,
+        "p95_response_time_s": 3.44,
+        "p99_response_time_s": 3.44,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Login",
+        "execution_count": 5,
+        "min_response_time_s": 2.17,
+        "avg_response_time_s": 2.5,
+        "max_response_time_s": 2.9,
+        "p95_response_time_s": 2.9,
+        "p99_response_time_s": 2.9,
+        "error_count": 5,
+        "error_pct": 100,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Init",
+        "execution_count": 5,
+        "min_response_time_s": 0,
+        "avg_response_time_s": 0,
+        "max_response_time_s": 0,
+        "p95_response_time_s": null,
+        "p99_response_time_s": null,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Actions",
+        "execution_count": 5,
+        "min_response_time_s": 10,
+        "avg_response_time_s": 10.72,
+        "max_response_time_s": 11.8,
+        "p95_response_time_s": null,
+        "p99_response_time_s": null,
+        "error_count": 5,
+        "error_pct": 100,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "click on ipods tab",
+        "execution_count": 10,
+        "min_response_time_s": 1.36,
+        "avg_response_time_s": 1.55,
+        "max_response_time_s": 1.66,
+        "p95_response_time_s": 1.66,
+        "p99_response_time_s": 1.66,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "add to wish list_KPI",
+        "execution_count": 10,
+        "min_response_time_s": 0.959,
+        "avg_response_time_s": 1.07,
+        "max_response_time_s": 1.12,
+        "p95_response_time_s": 1.13,
+        "p99_response_time_s": 1.13,
+        "error_count": 5,
+        "error_pct": 50,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "click on main wish list",
+        "execution_count": 10,
+        "min_response_time_s": 0.638,
+        "avg_response_time_s": 0.69,
+        "max_response_time_s": 0.751,
+        "p95_response_time_s": 0.751,
+        "p99_response_time_s": 0.751,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Remove one wish list_KPI",
+        "execution_count": 10,
+        "min_response_time_s": 0.933,
+        "avg_response_time_s": 1.03,
+        "max_response_time_s": 1.21,
+        "p95_response_time_s": 1.21,
+        "p99_response_time_s": 1.21,
+        "error_count": 5,
+        "error_pct": 50,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "click continue",
+        "execution_count": 10,
+        "min_response_time_s": 0.33,
+        "avg_response_time_s": 0.35,
+        "max_response_time_s": 0.396,
+        "p95_response_time_s": 0.396,
+        "p99_response_time_s": 0.396,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Logout",
+        "execution_count": 5,
+        "min_response_time_s": 1.45,
+        "avg_response_time_s": 1.54,
+        "max_response_time_s": 1.73,
+        "p95_response_time_s": 1.73,
+        "p99_response_time_s": 1.73,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "End",
+        "execution_count": 5,
+        "min_response_time_s": 0,
+        "avg_response_time_s": 0,
+        "max_response_time_s": 0,
+        "p95_response_time_s": null,
+        "p99_response_time_s": null,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Click any Lap & notebooks",
+        "execution_count": 5,
+        "min_response_time_s": 0.704,
+        "avg_response_time_s": 0.779,
+        "max_response_time_s": 0.825,
+        "p95_response_time_s": 0.825,
+        "p99_response_time_s": 0.825,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Click newsletter",
+        "execution_count": 5,
+        "min_response_time_s": 0.648,
+        "avg_response_time_s": 0.729,
+        "max_response_time_s": 0.846,
+        "p95_response_time_s": 0.846,
+        "p99_response_time_s": 0.846,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Subscribe Continue_KPI",
+        "execution_count": 5,
+        "min_response_time_s": 1.08,
+        "avg_response_time_s": 1.12,
+        "max_response_time_s": 1.17,
+        "p95_response_time_s": 1.17,
+        "p99_response_time_s": 1.17,
+        "error_count": 5,
+        "error_pct": 100,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "again click on New letter",
+        "execution_count": 5,
+        "min_response_time_s": 0.619,
+        "avg_response_time_s": 0.689,
+        "max_response_time_s": 0.748,
+        "p95_response_time_s": 0.748,
+        "p99_response_time_s": 0.748,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Unsubcribe continue_KPI",
+        "execution_count": 5,
+        "min_response_time_s": 0.998,
+        "avg_response_time_s": 1.03,
+        "max_response_time_s": 1.1,
+        "p95_response_time_s": 1.1,
+        "p99_response_time_s": 1.1,
+        "error_count": 5,
+        "error_pct": 100,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "logout",
+        "execution_count": 5,
+        "min_response_time_s": 1.64,
+        "avg_response_time_s": 1.98,
+        "max_response_time_s": 2.52,
+        "p95_response_time_s": 2.52,
+        "p99_response_time_s": 2.52,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Click on Special Offers_KPI",
+        "execution_count": 5,
+        "min_response_time_s": 2.23,
+        "avg_response_time_s": 7.74,
+        "max_response_time_s": 11.2,
+        "p95_response_time_s": 11.2,
+        "p99_response_time_s": 11.2,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "edit account information_KPI",
+        "execution_count": 5,
+        "min_response_time_s": 0.65,
+        "avg_response_time_s": 0.722,
+        "max_response_time_s": 0.801,
+        "p95_response_time_s": 0.801,
+        "p99_response_time_s": 0.801,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "continue",
+        "execution_count": 5,
+        "min_response_time_s": 1.02,
+        "avg_response_time_s": 1.13,
+        "max_response_time_s": 1.44,
+        "p95_response_time_s": 1.44,
+        "p99_response_time_s": 1.44,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Click on address book",
+        "execution_count": 5,
+        "min_response_time_s": 0.68,
+        "avg_response_time_s": 0.701,
+        "max_response_time_s": 0.726,
+        "p95_response_time_s": 0.726,
+        "p99_response_time_s": 0.726,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Add new address_KPI",
+        "execution_count": 5,
+        "min_response_time_s": 1,
+        "avg_response_time_s": 1.06,
+        "max_response_time_s": 1.12,
+        "p95_response_time_s": 1.12,
+        "p99_response_time_s": 1.12,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Click My Account",
+        "execution_count": 9,
+        "min_response_time_s": 0.626,
+        "avg_response_time_s": 0.668,
+        "max_response_time_s": 0.775,
+        "p95_response_time_s": 0.775,
+        "p99_response_time_s": 0.775,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Modify address book entries",
+        "execution_count": 5,
+        "min_response_time_s": 0.649,
+        "avg_response_time_s": 0.722,
+        "max_response_time_s": 0.794,
+        "p95_response_time_s": 0.794,
+        "p99_response_time_s": 0.794,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "change address",
+        "execution_count": 5,
+        "min_response_time_s": 1.71,
+        "avg_response_time_s": 1.8,
+        "max_response_time_s": 1.96,
+        "p95_response_time_s": 1.96,
+        "p99_response_time_s": 1.96,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Continue",
+        "execution_count": 5,
+        "min_response_time_s": 0.947,
+        "avg_response_time_s": 1.01,
+        "max_response_time_s": 1.09,
+        "p95_response_time_s": 1.09,
+        "p99_response_time_s": 1.09,
+        "error_count": 5,
+        "error_pct": 100,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Myaccount",
+        "execution_count": 5,
+        "min_response_time_s": 0.671,
+        "avg_response_time_s": 0.716,
+        "max_response_time_s": 0.742,
+        "p95_response_time_s": 0.742,
+        "p99_response_time_s": 0.742,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Registeraffliate account",
+        "execution_count": 5,
+        "min_response_time_s": 1.64,
+        "avg_response_time_s": 1.8,
+        "max_response_time_s": 1.98,
+        "p95_response_time_s": 1.98,
+        "p99_response_time_s": 1.98,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      }
+    ],
+    "raw_source_files": [
+      "result_fb5f809c-2d6c-4d4d-8092-c4ea36eba964/summary/index.html",
+      "result_fb5f809c-2d6c-4d4d-8092-c4ea36eba964/summary/index_files/Main graphs_errors.html",
+      "result_fb5f809c-2d6c-4d4d-8092-c4ea36eba964/summary/index_files/Main graphs_hits.html",
+      "result_fb5f809c-2d6c-4d4d-8092-c4ea36eba964/summary/index_files/Main graphs_pages.average.html",
+      "result_fb5f809c-2d6c-4d4d-8092-c4ea36eba964/summary/index_files/Main graphs_pages.average.vu.html",
+      "result_fb5f809c-2d6c-4d4d-8092-c4ea36eba964/summary/index_files/Main graphs_percentile.html",
+      "result_fb5f809c-2d6c-4d4d-8092-c4ea36eba964/summary/index_files/Main graphs_requests.average.html",
+      "result_fb5f809c-2d6c-4d4d-8092-c4ea36eba964/summary/index_files/Main graphs_throughput.html",
+      "result_fb5f809c-2d6c-4d4d-8092-c4ea36eba964/summary/index_files/Main graphs_transactions.average.html",
+      "result_fb5f809c-2d6c-4d4d-8092-c4ea36eba964/summary/index_files/medias.html",
+      "result_fb5f809c-2d6c-4d4d-8092-c4ea36eba964/summary/index_files/monitors.html",
+      "result_fb5f809c-2d6c-4d4d-8092-c4ea36eba964/summary/index_files/pages.html",
+      "result_fb5f809c-2d6c-4d4d-8092-c4ea36eba964/summary/index_files/populations.html",
+      "result_fb5f809c-2d6c-4d4d-8092-c4ea36eba964/summary/index_files/pushmessages.html",
+      "result_fb5f809c-2d6c-4d4d-8092-c4ea36eba964/summary/index_files/scenario_Sanity Test.html",
+      "result_fb5f809c-2d6c-4d4d-8092-c4ea36eba964/summary/index_files/servers.html",
+      "result_fb5f809c-2d6c-4d4d-8092-c4ea36eba964/summary/index_files/settings.html",
+      "result_fb5f809c-2d6c-4d4d-8092-c4ea36eba964/summary/index_files/sla-details-results-per-vu.html",
+      "result_fb5f809c-2d6c-4d4d-8092-c4ea36eba964/summary/index_files/sla-profiles-details.html",
+      "result_fb5f809c-2d6c-4d4d-8092-c4ea36eba964/summary/index_files/summary.html",
+      "result_fb5f809c-2d6c-4d4d-8092-c4ea36eba964/summary/index_files/transactions.html",
+      "result_fb5f809c-2d6c-4d4d-8092-c4ea36eba964/summary/index_files/virtual-users.html"
+    ]
+  },
+  "analysis": {
+    "thresholds": {
+      "error_pct": 5.0,
+      "response_time_s": 3.0,
+      "tps_drop_pct": 25.0
+    },
+    "findings": [
+      {
+        "category": "errors",
+        "severity": "high",
+        "transaction": "Login",
+        "evidence": "100% (5 of 5) executions failed."
+      },
+      {
+        "category": "response_time",
+        "severity": "high",
+        "transaction": "Actions",
+        "evidence": "Average response time is 10.72 seconds."
+      },
+      {
+        "category": "errors",
+        "severity": "high",
+        "transaction": "Actions",
+        "evidence": "100% (5 of 5) executions failed."
+      },
+      {
+        "category": "errors",
+        "severity": "high",
+        "transaction": "add to wish list_KPI",
+        "evidence": "50% (5 of 10) executions failed."
+      },
+      {
+        "category": "errors",
+        "severity": "high",
+        "transaction": "Remove one wish list_KPI",
+        "evidence": "50% (5 of 10) executions failed."
+      },
+      {
+        "category": "errors",
+        "severity": "high",
+        "transaction": "Subscribe Continue_KPI",
+        "evidence": "100% (5 of 5) executions failed."
+      },
+      {
+        "category": "errors",
+        "severity": "high",
+        "transaction": "Unsubcribe continue_KPI",
+        "evidence": "100% (5 of 5) executions failed."
+      },
+      {
+        "category": "response_time",
+        "severity": "high",
+        "transaction": "Click on Special Offers_KPI",
+        "evidence": "Average response time is 7.74 seconds."
+      },
+      {
+        "category": "errors",
+        "severity": "high",
+        "transaction": "Continue",
+        "evidence": "100% (5 of 5) executions failed."
+      }
+    ],
+    "bottlenecks": [
+      {
+        "issue": "High error rate in Login",
+        "severity": "high",
+        "supporting_metrics": "Error rate 100% (5 failures)",
+        "time_window": "Entire test run",
+        "possible_root_cause": "Application, assertion, or dependency failures require transaction-level investigation.",
+        "recommendation": "Inspect NeoLoad assertion/error details and application logs for this transaction.",
+        "corrective_action": "Fix the failed requests or assertions; retest with the same load profile.",
+        "confidence": "potential"
+      },
+      {
+        "issue": "High error rate in Actions",
+        "severity": "high",
+        "supporting_metrics": "Error rate 100% (5 failures)",
+        "time_window": "Entire test run",
+        "possible_root_cause": "Application, assertion, or dependency failures require transaction-level investigation.",
+        "recommendation": "Inspect NeoLoad assertion/error details and application logs for this transaction.",
+        "corrective_action": "Fix the failed requests or assertions; retest with the same load profile.",
+        "confidence": "potential"
+      },
+      {
+        "issue": "High error rate in add to wish list_KPI",
+        "severity": "high",
+        "supporting_metrics": "Error rate 50% (5 failures)",
+        "time_window": "Entire test run",
+        "possible_root_cause": "Application, assertion, or dependency failures require transaction-level investigation.",
+        "recommendation": "Inspect NeoLoad assertion/error details and application logs for this transaction.",
+        "corrective_action": "Fix the failed requests or assertions; retest with the same load profile.",
+        "confidence": "potential"
+      },
+      {
+        "issue": "High error rate in Remove one wish list_KPI",
+        "severity": "high",
+        "supporting_metrics": "Error rate 50% (5 failures)",
+        "time_window": "Entire test run",
+        "possible_root_cause": "Application, assertion, or dependency failures require transaction-level investigation.",
+        "recommendation": "Inspect NeoLoad assertion/error details and application logs for this transaction.",
+        "corrective_action": "Fix the failed requests or assertions; retest with the same load profile.",
+        "confidence": "potential"
+      },
+      {
+        "issue": "High error rate in Subscribe Continue_KPI",
+        "severity": "high",
+        "supporting_metrics": "Error rate 100% (5 failures)",
+        "time_window": "Entire test run",
+        "possible_root_cause": "Application, assertion, or dependency failures require transaction-level investigation.",
+        "recommendation": "Inspect NeoLoad assertion/error details and application logs for this transaction.",
+        "corrective_action": "Fix the failed requests or assertions; retest with the same load profile.",
+        "confidence": "potential"
+      },
+      {
+        "issue": "High error rate in Unsubcribe continue_KPI",
+        "severity": "high",
+        "supporting_metrics": "Error rate 100% (5 failures)",
+        "time_window": "Entire test run",
+        "possible_root_cause": "Application, assertion, or dependency failures require transaction-level investigation.",
+        "recommendation": "Inspect NeoLoad assertion/error details and application logs for this transaction.",
+        "corrective_action": "Fix the failed requests or assertions; retest with the same load profile.",
+        "confidence": "potential"
+      },
+      {
+        "issue": "High error rate in Continue",
+        "severity": "high",
+        "supporting_metrics": "Error rate 100% (5 failures)",
+        "time_window": "Entire test run",
+        "possible_root_cause": "Application, assertion, or dependency failures require transaction-level investigation.",
+        "recommendation": "Inspect NeoLoad assertion/error details and application logs for this transaction.",
+        "corrective_action": "Fix the failed requests or assertions; retest with the same load profile.",
+        "confidence": "potential"
+      }
+    ],
+    "slowest_transactions": [
+      {
+        "name": "Actions",
+        "execution_count": 5,
+        "min_response_time_s": 10,
+        "avg_response_time_s": 10.72,
+        "max_response_time_s": 11.8,
+        "p95_response_time_s": null,
+        "p99_response_time_s": null,
+        "error_count": 5,
+        "error_pct": 100,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Click on Special Offers_KPI",
+        "execution_count": 5,
+        "min_response_time_s": 2.23,
+        "avg_response_time_s": 7.74,
+        "max_response_time_s": 11.2,
+        "p95_response_time_s": 11.2,
+        "p99_response_time_s": 11.2,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Login",
+        "execution_count": 5,
+        "min_response_time_s": 2.17,
+        "avg_response_time_s": 2.5,
+        "max_response_time_s": 2.9,
+        "p95_response_time_s": 2.9,
+        "p99_response_time_s": 2.9,
+        "error_count": 5,
+        "error_pct": 100,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "launch",
+        "execution_count": 5,
+        "min_response_time_s": 1.29,
+        "avg_response_time_s": 2.14,
+        "max_response_time_s": 3.44,
+        "p95_response_time_s": 3.44,
+        "p99_response_time_s": 3.44,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "logout",
+        "execution_count": 5,
+        "min_response_time_s": 1.64,
+        "avg_response_time_s": 1.98,
+        "max_response_time_s": 2.52,
+        "p95_response_time_s": 2.52,
+        "p99_response_time_s": 2.52,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      }
+    ],
+    "transactions_with_most_errors": [
+      {
+        "name": "Login",
+        "execution_count": 5,
+        "min_response_time_s": 2.17,
+        "avg_response_time_s": 2.5,
+        "max_response_time_s": 2.9,
+        "p95_response_time_s": 2.9,
+        "p99_response_time_s": 2.9,
+        "error_count": 5,
+        "error_pct": 100,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Actions",
+        "execution_count": 5,
+        "min_response_time_s": 10,
+        "avg_response_time_s": 10.72,
+        "max_response_time_s": 11.8,
+        "p95_response_time_s": null,
+        "p99_response_time_s": null,
+        "error_count": 5,
+        "error_pct": 100,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "add to wish list_KPI",
+        "execution_count": 10,
+        "min_response_time_s": 0.959,
+        "avg_response_time_s": 1.07,
+        "max_response_time_s": 1.12,
+        "p95_response_time_s": 1.13,
+        "p99_response_time_s": 1.13,
+        "error_count": 5,
+        "error_pct": 50,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Remove one wish list_KPI",
+        "execution_count": 10,
+        "min_response_time_s": 0.933,
+        "avg_response_time_s": 1.03,
+        "max_response_time_s": 1.21,
+        "p95_response_time_s": 1.21,
+        "p99_response_time_s": 1.21,
+        "error_count": 5,
+        "error_pct": 50,
+        "source": "NeoLoad HTML"
+      },
+      {
+        "name": "Subscribe Continue_KPI",
+        "execution_count": 5,
+        "min_response_time_s": 1.08,
+        "avg_response_time_s": 1.12,
+        "max_response_time_s": 1.17,
+        "p95_response_time_s": 1.17,
+        "p99_response_time_s": 1.17,
+        "error_count": 5,
+        "error_pct": 100,
+        "source": "NeoLoad HTML"
+      }
+    ]
+  }
+}

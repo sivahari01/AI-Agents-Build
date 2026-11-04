@@ -1,0 +1,96 @@
+{
+  "created_at": "2026-11-04T20:50:48",
+  "scenario": "ConCurrent_Fetch",
+  "report": {
+    "report_type": "NeoLoad",
+    "scenario_name": "ConCurrent_Fetch",
+    "project": "OpenCart",
+    "status": "Passed",
+    "start_time": "May 28, 2024, 11:40:50 AM",
+    "end_time": "May 28, 2024, 11:41:55 AM",
+    "duration_seconds": 64.0,
+    "max_virtual_users": 5,
+    "total_virtual_users_launched": 5,
+    "total_iterations_completed": 0,
+    "total_transactions": 5,
+    "total_requests": 0,
+    "failed_transactions": 0,
+    "error_rate_pct": 0,
+    "average_tps": 0,
+    "average_response_time_s": 0,
+    "total_throughput_mb": 0,
+    "average_throughput_mbps": 0,
+    "transactions": [
+      {
+        "name": "Init",
+        "execution_count": 5,
+        "min_response_time_s": 0.003,
+        "avg_response_time_s": 0.003,
+        "max_response_time_s": 0.003,
+        "p95_response_time_s": null,
+        "p99_response_time_s": null,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      }
+    ],
+    "raw_source_files": [
+      "result_10722999-dd14-4413-ab5e-4c91d3aa0e5d/summary/index.html",
+      "result_10722999-dd14-4413-ab5e-4c91d3aa0e5d/summary/index_files/Main graphs_errors.html",
+      "result_10722999-dd14-4413-ab5e-4c91d3aa0e5d/summary/index_files/Main graphs_hits.html",
+      "result_10722999-dd14-4413-ab5e-4c91d3aa0e5d/summary/index_files/Main graphs_pages.average.html",
+      "result_10722999-dd14-4413-ab5e-4c91d3aa0e5d/summary/index_files/Main graphs_requests.average.html",
+      "result_10722999-dd14-4413-ab5e-4c91d3aa0e5d/summary/index_files/Main graphs_throughput.html",
+      "result_10722999-dd14-4413-ab5e-4c91d3aa0e5d/summary/index_files/Main graphs_transactions.average.html",
+      "result_10722999-dd14-4413-ab5e-4c91d3aa0e5d/summary/index_files/medias.html",
+      "result_10722999-dd14-4413-ab5e-4c91d3aa0e5d/summary/index_files/monitors.html",
+      "result_10722999-dd14-4413-ab5e-4c91d3aa0e5d/summary/index_files/pages.html",
+      "result_10722999-dd14-4413-ab5e-4c91d3aa0e5d/summary/index_files/populations.html",
+      "result_10722999-dd14-4413-ab5e-4c91d3aa0e5d/summary/index_files/pushmessages.html",
+      "result_10722999-dd14-4413-ab5e-4c91d3aa0e5d/summary/index_files/scenario_ConCurrent_Fetch.html",
+      "result_10722999-dd14-4413-ab5e-4c91d3aa0e5d/summary/index_files/settings.html",
+      "result_10722999-dd14-4413-ab5e-4c91d3aa0e5d/summary/index_files/sla-details-results-per-vu.html",
+      "result_10722999-dd14-4413-ab5e-4c91d3aa0e5d/summary/index_files/sla-profiles-details.html",
+      "result_10722999-dd14-4413-ab5e-4c91d3aa0e5d/summary/index_files/summary.html",
+      "result_10722999-dd14-4413-ab5e-4c91d3aa0e5d/summary/index_files/transactions.html",
+      "result_10722999-dd14-4413-ab5e-4c91d3aa0e5d/summary/index_files/virtual-users.html"
+    ]
+  },
+  "analysis": {
+    "thresholds": {
+      "error_pct": 5.0,
+      "response_time_s": 3.0,
+      "tps_drop_pct": 25.0
+    },
+    "findings": [],
+    "bottlenecks": [],
+    "slowest_transactions": [
+      {
+        "name": "Init",
+        "execution_count": 5,
+        "min_response_time_s": 0.003,
+        "avg_response_time_s": 0.003,
+        "max_response_time_s": 0.003,
+        "p95_response_time_s": null,
+        "p99_response_time_s": null,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      }
+    ],
+    "transactions_with_most_errors": [
+      {
+        "name": "Init",
+        "execution_count": 5,
+        "min_response_time_s": 0.003,
+        "avg_response_time_s": 0.003,
+        "max_response_time_s": 0.003,
+        "p95_response_time_s": null,
+        "p99_response_time_s": null,
+        "error_count": 0,
+        "error_pct": 0,
+        "source": "NeoLoad HTML"
+      }
+    ]
+  }
+}
