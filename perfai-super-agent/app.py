@@ -132,7 +132,18 @@ elif page=="New Relic":
         if st.session_state.get("newrelic_entities"):
             st.dataframe(pd.DataFrame(st.session_state.newrelic_entities),use_container_width=True,hide_index=True)
         st.markdown("#### NRQL query")
-        default_query=f"SELECT average(duration) AS avg_duration, rate(count(*), 1 minute) AS rpm FROM Transaction WHERE entity.guid = '{entity_guid}' TIMESERIES 1 minute SINCE 60 minutes ago" if entity_guid else "SELECT count(*) FROM Transaction SINCE 60 minutes ago"
+        query_template=st.selectbox("Metric query template",[
+            "Custom NRQL","APM latency and throughput","APM error percentage","Infrastructure CPU and memory","Database duration"
+        ])
+        templates={
+            "APM latency and throughput":f"SELECT average(duration) AS avg_duration_s, rate(count(*), 1 minute) AS rpm FROM Transaction WHERE entity.guid = '{entity_guid}' TIMESERIES 1 minute SINCE 60 minutes ago",
+            "APM error percentage":f"SELECT percentage(count(*), WHERE error IS true) AS error_pct FROM Transaction WHERE entity.guid = '{entity_guid}' TIMESERIES 1 minute SINCE 60 minutes ago",
+            "Infrastructure CPU and memory":f"SELECT average(cpuPercent) AS cpu_pct, average(memoryUsedPercent) AS memory_pct FROM SystemSample WHERE entity.guid = '{entity_guid}' TIMESERIES 1 minute SINCE 60 minutes ago",
+            "Database duration":f"SELECT average(databaseDuration) AS avg_database_duration_s FROM Transaction WHERE entity.guid = '{entity_guid}' TIMESERIES 1 minute SINCE 60 minutes ago"
+        }
+        default_query=templates.get(query_template,"SELECT count(*) FROM Transaction SINCE 60 minutes ago")
+        if query_template!="Custom NRQL" and not entity_guid:
+            st.warning("Enter an Entity GUID to scope this template to a specific service. Edit the NRQL manually if needed.")
         nrql=st.text_area("Read-only NRQL",value=default_query,height=110)
         if st.button("Fetch New Relic metrics",type="primary"):
             try:
