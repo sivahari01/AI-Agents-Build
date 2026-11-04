@@ -6,10 +6,11 @@ PerfAI combines load-test reports, New Relic telemetry, deterministic analysis, 
 - NeoLoad ZIP/HTML, JMeter CSV/JTL, JSON, Excel, and text-log ingestion (format-dependent fields remain unavailable when absent).
 - Normalized test metrics and transaction summaries.
 - Read-only New Relic NerdGraph/NRQL integration with entity discovery.
-- Timestamp alignment and Pearson correlation for comparable time series.
+- Timestamp alignment and Pearson correlation for load-test, New Relic, and Prometheus range-query time series.
+- Baseline/candidate performance test comparison, including transaction deltas.
 - Configurable bottleneck rules and evidence-labelled findings.
 - Transaction/iteration Little's Law workload sizing.
-- Optional local Ollama chat and HTML/JSON/CSV exports.
+- Optional local Ollama chat and HTML, JSON, Excel, and PDF RCA exports.
 
 ## Quick start
 ```bash
@@ -34,6 +35,7 @@ Entity discovery and metric availability depend on the account's instrumentation
 - Correlation indicates co-movement, not causation.
 - Workload sizing requires a rate and time measurement from the same scope.
 - New Relic query schema/attributes vary by instrumentation; use discovered data and adapt NRQL.
+- Infrastructure query templates depend on New Relic Infrastructure agent data; JVM/database attributes are not assumed to exist.
 - No telemetry is uploaded to an LLM by default. Only the selected report context is sent to a locally configured Ollama endpoint.
 
 ## Tests
