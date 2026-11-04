@@ -169,6 +169,17 @@ elif page=="Server-side Analysis":
         frame=pd.json_normalize(results)
         st.dataframe(frame,use_container_width=True,hide_index=True)
         st.caption("New Relic attributes depend on installed agents and instrumentation. Only returned attributes are displayed.")
+        if st.button("Analyze latest New Relic row for known bottleneck aliases"):
+            latest=results[-1]
+            aliases={"cpu_pct","memory_pct","error_rate_pct","response_time_s","gc_pause_ms"}
+            values={}
+            for key in aliases:
+                value=latest.get(key)
+                if isinstance(value,(int,float)): values[key]=float(value)
+            st.session_state.findings=detect_bottlenecks(values)
+            if not values: st.warning("No recognized aliases found. Use NRQL aliases such as cpu_pct, memory_pct, error_rate_pct, response_time_s, or gc_pause_ms.")
+            elif st.session_state.findings: st.dataframe(pd.DataFrame(st.session_state.findings),use_container_width=True,hide_index=True)
+            else: st.success("No configured thresholds were exceeded by the latest returned row.")
         st.download_button("Export server-side metrics",frame.to_csv(index=False),file_name="server-metrics.csv")
 
 elif page=="Correlation":
