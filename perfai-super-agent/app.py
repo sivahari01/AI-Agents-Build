@@ -135,11 +135,12 @@ elif page=="New Relic":
         query_template=st.selectbox("Metric query template",[
             "Custom NRQL","APM latency and throughput","APM error percentage","Infrastructure CPU and memory","Database duration"
         ])
+        entity_filter=f" WHERE entity.guid = '{entity_guid}'" if entity_guid else ""
         templates={
-            "APM latency and throughput":f"SELECT average(duration) AS avg_duration_s, rate(count(*), 1 minute) AS rpm FROM Transaction WHERE entity.guid = '{entity_guid}' TIMESERIES 1 minute SINCE 60 minutes ago",
-            "APM error percentage":f"SELECT percentage(count(*), WHERE error IS true) AS error_pct FROM Transaction WHERE entity.guid = '{entity_guid}' TIMESERIES 1 minute SINCE 60 minutes ago",
-            "Infrastructure CPU and memory":f"SELECT average(cpuPercent) AS cpu_pct, average(memoryUsedPercent) AS memory_pct FROM SystemSample WHERE entity.guid = '{entity_guid}' TIMESERIES 1 minute SINCE 60 minutes ago",
-            "Database duration":f"SELECT average(databaseDuration) AS avg_database_duration_s FROM Transaction WHERE entity.guid = '{entity_guid}' TIMESERIES 1 minute SINCE 60 minutes ago"
+            "APM latency and throughput":f"SELECT average(duration) AS avg_duration_s, rate(count(*), 1 minute) AS rpm FROM Transaction{entity_filter} TIMESERIES 1 minute SINCE 60 minutes ago",
+            "APM error percentage":f"SELECT percentage(count(*), WHERE error IS true) AS error_pct FROM Transaction{entity_filter} TIMESERIES 1 minute SINCE 60 minutes ago",
+            "Infrastructure CPU and memory":f"SELECT average(cpuPercent) AS cpu_pct, average(memoryUsedPercent) AS memory_pct FROM SystemSample{entity_filter} TIMESERIES 1 minute SINCE 60 minutes ago",
+            "Database duration":f"SELECT average(databaseDuration) AS avg_database_duration FROM Transaction{entity_filter} TIMESERIES 1 minute SINCE 60 minutes ago"
         }
         default_query=templates.get(query_template,"SELECT count(*) FROM Transaction SINCE 60 minutes ago")
         if query_template!="Custom NRQL" and not entity_guid:
