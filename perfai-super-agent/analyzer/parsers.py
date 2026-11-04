@@ -55,7 +55,8 @@ def parse_jmeter_frame(frame: pd.DataFrame, source="JMeter") -> NormalizedReport
         if dates.notna().any():
             frame["_time"]=dates
             start=dates.min().isoformat(); end=dates.max().isoformat()
-            duration=max((dates.max()-dates.min()).total_seconds(),0.001)
+            span=(dates.max()-dates.min()).total_seconds()
+            duration=span if span>0 else None
             bucket=frame.set_index("_time").resample("10s").agg(samples=("_elapsed_ms","count"),avg_ms=("_elapsed_ms","mean"),errors=("_error","sum")).dropna(how="all")
             ts=[{"timestamp":idx.isoformat(),"requests":int(r.samples),"response_time_s":float(r.avg_ms/1000),"errors":int(r.errors)} for idx,r in bucket.iterrows()]
     total=len(frame); failed=int(frame["_error"].sum())
