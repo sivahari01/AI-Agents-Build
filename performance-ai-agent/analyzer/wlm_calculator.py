@@ -133,155 +133,155 @@ def calculate_workload_recommendation(
     workload_type: str = "constant",
     workload_scope: str = "transaction",
 ) -> dict:
-    """Calculate a validated workload recommendation from measured report values."""
+    """Apply Little's Law only when throughput and time use the same scope.
+
+    Transaction scope: VUs = transaction TPS x weighted transaction response time.
+    Iteration scope: VUs = iteration IPS x (iteration response + think time + pacing).
+    """
     observed_users = report.get("max_virtual_users")
     duration = report.get("duration_seconds")
     transactions = report.get("transactions", [])
-    total_executions = sum(row.get("execution_count") or 0 for row in transactions)
+    scope = str(workload_scope).lower().strip()
+    errors, missing = [], []
 
+    if scope not in {"transaction", "iteration"}:
+        errors.append("Workload scope must be 'transaction' or 'iteration'.")
+    if target_tps is not None and target_tps <= 0:
+        errors.append("Target throughput must be greater than zero.")
+    if target_users is not None and target_users <= 0:
+        errors.append("Target virtual users must be greater than zero.")
+    if target_tps is None and target_users is None:
+        missing.append("Target transaction TPS / iteration IPS or target VU count")
+
+    total_executions = sum(
+        row.get("execution_count") or 0 for row in transactions
+        if isinstance(row.get("execution_count"), (int, float))
+    )
     measured_transaction_tps = (
         total_executions / duration
-        if duration and duration > 0 and total_executions
+        if isinstance(duration, (int, float)) and duration > 0 and total_executions > 0
         else None
     )
     measured_rps = (
         report.get("total_requests") / duration
-        if report.get("total_requests") is not None and duration and duration > 0
+        if report.get("total_requests") is not None
+        and isinstance(duration, (int, float)) and duration > 0
         else report.get("average_requests_per_second")
     )
     iterations = report.get("total_iterations_completed")
-    measured_iteration_tps = (
+    measured_iteration_ips = (
         iterations / duration
-        if iterations is not None and duration and duration > 0
+        if iterations is not None and isinstance(duration, (int, float)) and duration > 0
         else None
     )
 
-    weighted_numerator = 0
-    weighted_count = 0
+    weighted_rt = None
+    if transactions and total_executions:
+        complete = all(
+            not (row.get("execution_count") or 0) or row.get("avg_response_time_s") is not None
+            for row in transactions
+        )
+        if complete:
+            weighted_rt = sum(
+                (row.get("execution_count") or 0) * row.get("avg_response_time_s", 0)
+                for row in transactions
+            ) / total_executions
+    elif not transactions:
+        weighted_rt = report.get("average_response_time_s")
+
     transaction_rows = []
     for row in transactions:
-        executions = row.get("execution_count") or 0
-        mix = executions / total_executions * 100 if total_executions else None
-        allocated_tps = target_tps * mix / 100 if target_tps is not None and mix is not None else None
-        average_rt = row.get("avg_response_time_s")
-        if executions and average_rt is not None:
-            weighted_numerator += executions * average_rt
-            weighted_count += executions
+        count = row.get("execution_count") or 0
+        mix = count / total_executions * 100 if total_executions else None
+        allocation = target_tps * mix / 100 if target_tps is not None and mix is not None else None
         transaction_rows.append({
-            "transaction": row.get("name"),
-            "executions": executions,
+            "transaction": row.get("name"), "executions": count,
             "mix_pct": round(mix, 2) if mix is not None else None,
-            "target_tps": round(allocated_tps, 3) if allocated_tps is not None else None,
-            "average_response_time_s": average_rt,
+            "target_tps": round(allocation, 3) if allocation is not None else None,
+            "average_response_time_s": row.get("avg_response_time_s"),
             "p95_response_time_s": row.get("p95_response_time_s"),
             "p99_response_time_s": row.get("p99_response_time_s"),
-            "error_count": row.get("error_count"),
-            "error_pct": row.get("error_pct"),
+            "error_count": row.get("error_count"), "error_pct": row.get("error_pct"),
         })
-    weighted_average_rt = (
-        weighted_numerator / weighted_count
-        if weighted_count
-        else report.get("average_response_time_s")
-    )
 
-    missing = []
-    errors = []
-    scope = workload_scope.lower()
-    if target_tps is None and target_users is None:
-        missing.append("Target TPS or target virtual users")
-    if duration is None or duration <= 0:
-        errors.append("Test duration is unavailable, so measured TPS cannot be validated.")
-    if scope == "iteration":
+    response_time_s, cycle_time_s, formula, inputs, substitution = None, None, None, {}, None
+    if scope == "transaction":
+        response_time_s = weighted_rt
+        if target_tps is not None and response_time_s is None:
+            missing.append("Complete weighted average transaction response time")
+        if target_tps is not None and response_time_s is not None:
+            cycle_time_s = response_time_s
+            formula = "VUs = target transaction TPS x weighted transaction response time"
+            inputs = {"target_transaction_tps": target_tps,
+                      "weighted_transaction_response_time_s": response_time_s}
+            substitution = f"{target_tps} x {response_time_s}"
+    elif scope == "iteration":
         response_time_s = report.get("iteration_average_time_s")
-        if response_time_s is None:
-            missing.append("Iteration average completion time")
-        if think_time_s is None:
-            missing.append("Complete-journey think time (seconds)")
-    else:
-        response_time_s = weighted_average_rt
-        if response_time_s is None:
-            errors.append("Weighted transaction response time is unavailable.")
+        if target_tps is not None and response_time_s is None:
+            missing.append("Average complete-iteration response time (seconds)")
+        if target_tps is not None and think_time_s is None:
+            missing.append("Total think time per iteration (seconds)")
+        if target_tps is not None and pacing_s is None:
+            missing.append("Pacing per iteration (seconds; enter 0 if none)")
+        if (target_tps is not None and response_time_s is not None
+                and think_time_s is not None and pacing_s is not None):
+            cycle_time_s = response_time_s + think_time_s + pacing_s
+            formula = "VUs = target iteration IPS x (iteration response time + think time + pacing)"
+            inputs = {"target_iteration_ips": target_tps, "iteration_response_time_s": response_time_s,
+                      "think_time_s": think_time_s, "pacing_s": pacing_s}
+            substitution = f"{target_tps} x ({response_time_s} + {think_time_s} + {pacing_s})"
 
-    required_users = target_users
+    required_users = float(target_users) if target_users is not None else None
     steps = []
-    if target_users is None and target_tps is not None and response_time_s is not None:
-        cycle_time_s = response_time_s + (think_time_s or 0) + (pacing_s or 0)
+    if target_users is None and target_tps is not None and cycle_time_s is not None and not errors:
         required_users = target_tps * cycle_time_s
-        steps.append({
-            "metric": "Required virtual users",
-            "formula": "VUs = throughput x (response time + think time + pacing)",
-            "inputs": {
-                "throughput": target_tps,
-                "response_time_s": response_time_s,
-                "think_time_s": think_time_s or 0,
-                "pacing_s": pacing_s or 0,
-            },
-            "substitution": (
-                f"{target_tps} x ({response_time_s} + {think_time_s or 0} + {pacing_s or 0})"
-            ),
-            "result": round(required_users, 3),
-            "unit": "virtual users",
-        })
+        steps.append({"metric": "Required virtual users", "formula": formula, "inputs": inputs,
+                      "substitution": substitution, "result": round(required_users, 3),
+                      "unit": "virtual users"})
+    elif target_users is not None:
+        steps.append({"metric": "Target virtual users", "formula": "Use the explicitly supplied target VU count",
+                      "inputs": {"target_users": target_users}, "substitution": str(target_users),
+                      "result": target_users, "unit": "virtual users"})
 
-    high_error_transactions = [
-        row["transaction"] for row in transaction_rows
-        if row.get("error_pct") is not None and row["error_pct"] >= 5
-    ]
-    normalized_type = workload_type.lower()
-    peak_users = math.ceil(required_users) if required_users is not None else observed_users
-    if normalized_type == "spike" and peak_users is not None:
-        peak_users = math.ceil(peak_users * 1.5)
-    ramp_up = max(60, round(duration * 0.2)) if duration and normalized_type in {"ramp", "step"} else 60
-    sustain = duration if normalized_type != "custom" else None
-    ramp_down = 60 if normalized_type in {"ramp", "step", "spike"} else 30
-
+    high_error = [row["transaction"] for row in transaction_rows
+                  if row.get("error_pct") is not None and row["error_pct"] >= 5]
+    normalized_type = str(workload_type).lower()
+    required_vus = math.ceil(required_users) if required_users is not None else None
+    if normalized_type not in {"constant", "ramp", "step", "spike", "custom"}:
+        errors.append("Unsupported workload type.")
+    valid = not errors and not missing and required_users is not None
     return {
         "measured": {
-            "peak_vus": observed_users,
-            "duration_seconds": duration,
+            "peak_vus": observed_users, "duration_seconds": duration,
             "transaction_tps": round(measured_transaction_tps, 6) if measured_transaction_tps is not None else None,
             "rps": round(measured_rps, 6) if measured_rps is not None else None,
-            "iteration_throughput_per_second": round(measured_iteration_tps, 6) if measured_iteration_tps is not None else None,
-            "weighted_average_response_time_s": round(weighted_average_rt, 6) if weighted_average_rt is not None else None,
+            "iteration_throughput_per_second": round(measured_iteration_ips, 6) if measured_iteration_ips is not None else None,
+            "weighted_average_response_time_s": round(weighted_rt, 6) if weighted_rt is not None else None,
             "report_average_response_time_s": report.get("average_response_time_s"),
         },
-        "assumptions": {
-            "target_tps": target_tps,
-            "think_time_s": think_time_s,
-            "pacing_s": pacing_s,
-        },
+        "assumptions": {"target_tps": target_tps,
+                        "target_rate_unit": "transaction_tps" if scope == "transaction" else "iteration_ips",
+                        "think_time_s": think_time_s, "pacing_s": pacing_s},
         "recommended": {
-            "workload_type": normalized_type,
-            "target_tps": target_tps,
-            "required_vus": math.ceil(required_users) if required_users is not None else None,
-            "baseline_vus": observed_users,
-            "peak_vus": peak_users,
-            "ramp_up_seconds": ramp_up,
-            "sustain_seconds": sustain,
-            "ramp_down_seconds": ramp_down,
+            "workload_type": normalized_type, "target_tps": target_tps,
+            "required_vus": required_vus, "baseline_vus": observed_users, "peak_vus": required_vus,
+            "ramp_up_seconds": None, "sustain_seconds": duration if normalized_type != "custom" else None,
+            "ramp_down_seconds": None,
         },
-        "calculation": {
-            "method": "Little's Law: VUs = TPS x (response time + think time + pacing)",
-            "scope": scope,
-            "response_time_s": response_time_s,
-            "steps": steps,
-        },
+        "calculation": {"method": formula or "Little's Law: L = throughput rate x time in the same workload scope",
+                        "scope": scope, "response_time_s": response_time_s,
+                        "cycle_time_s": cycle_time_s, "steps": steps},
         "transactions": transaction_rows,
         "validation": {
-            "valid": not errors and required_users is not None,
-            "errors": errors,
-            "missing_requirements": sorted(set(missing)),
-            "high_error_transactions": high_error_transactions,
+            "valid": valid, "errors": errors, "missing_requirements": sorted(set(missing)),
+            "high_error_transactions": high_error,
+            "warnings": ["High-error transactions must be investigated before increasing load."] if high_error else [],
         },
         "neoload_guidance": {
             "population": f"{report.get('scenario_name') or 'PerfAI'}_WLM",
             "user_path": "Configure measured transaction actions in the reported proportions.",
-            "scenario": "Attach the population to a NeoLoad scenario with the recommended load policy.",
-            "variation_policy": {
-                "constant": "Constant",
-                "ramp": "Ramp up",
-                "step": "Step",
-                "spike": "Custom spike",
-            }.get(normalized_type, "Custom"),
+            "scenario": "Attach the population to a NeoLoad scenario with the selected load policy.",
+            "variation_policy": {"constant": "Constant", "ramp": "Ramp up", "step": "Step",
+                                 "spike": "Custom spike"}.get(normalized_type, "Custom"),
         },
     }
