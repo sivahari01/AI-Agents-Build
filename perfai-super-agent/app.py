@@ -100,8 +100,8 @@ elif page == "New Relic":
                               help="Use a New Relic User API key. It is not displayed or logged.")
         search=st.text_input("Search application or entity",placeholder="e.g. checkout-service")
     with right:
-        start=st.datetime_input("Start time (UTC)",value=datetime.now()-timedelta(hours=1))
-        end=st.datetime_input("End time (UTC)",value=datetime.now())
+        start=st.datetime_input("Start time (UTC)",value=datetime.now(timezone.utc).replace(tzinfo=None)-timedelta(hours=1))
+        end=st.datetime_input("End time (UTC)",value=datetime.now(timezone.utc).replace(tzinfo=None))
         st.caption("Choose a window matching the load test. All time-series comparisons are normalized to UTC.")
     client=None
     try:
@@ -265,6 +265,7 @@ elif page == "AI Performance Assistant":
                 answer=client.explain(SYSTEM_PROMPT,prompt+"\nUser question: "+question)
             except OllamaError as exc: answer=str(exc)
             st.session_state.chat.append(("assistant",answer))
+            st.session_state.last_ai_analysis = answer
             with st.chat_message("assistant"): st.markdown(answer)
 
 elif page == "RCA Report":
