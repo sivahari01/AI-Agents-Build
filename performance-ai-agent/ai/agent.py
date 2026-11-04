@@ -56,9 +56,11 @@ class PerfAIAgent:
                     target_users=forecast_users,
                 )
             else:
+                # Historical peak VUs are a baseline, not a business target.
+                # Never silently convert the observed load into a requested target.
                 wlm = calculate_workload_recommendation(
                     self.report,
-                    target_users=forecast_users or self.report.get("max_virtual_users"),
+                    target_users=forecast_users,
                 )
             prompt = WLM_PROMPT_TEMPLATE.format(wlm=json.dumps(wlm, indent=2))
             prompt += (
