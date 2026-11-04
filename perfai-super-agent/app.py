@@ -107,7 +107,8 @@ elif page=="New Relic":
     with c2:
         api_key=st.text_input("User API key",value=NEW_RELIC_API_KEY,type="password")
         entity_guid=st.text_input("Entity GUID (optional)")
-    if "nr_client" not in st.session_state or st.button("Test connection"):
+    test_connection=st.button("Test connection")
+    if test_connection:
         if api_key and account:
             try:
                 client=NewRelicClient(api_key,account,region)
