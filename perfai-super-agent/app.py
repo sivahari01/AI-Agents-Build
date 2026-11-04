@@ -45,7 +45,7 @@ with st.sidebar:
     st.caption("Local AI")
     st.code(OLLAMA_MODEL)
     if st.button("Clear session data"):
-        for key in ["perfai_report","newrelic_results","newrelic_entities","correlations","findings","ai_summary"]:
+        for key in ["perfai_report","newrelic_results","newrelic_entities","newrelic_timeseries","prometheus_timeseries","correlations","findings","ai_summary"]:
             st.session_state.pop(key,None)
         st.rerun()
 
@@ -162,8 +162,16 @@ elif page=="Server-side Analysis":
 elif page=="Correlation":
     st.subheader("Client-side / server-side time correlation")
     load_ts=(report_data or {}).get("timeseries",[]) if report_data else []
-    apm_ts=st.session_state.get("newrelic_timeseries",[])
-    st.write(f"Load-test time-series points: **{len(load_ts)}** · New Relic time-series points: **{len(apm_ts)}**")
+    st.caption("You can use New Relic NRQL results or upload a Prometheus range-query JSON export as the server-side series.")
+    prom_upload=st.file_uploader("Optional Prometheus range-query JSON",type=["json"],key="prometheus_correlation_upload")
+    if prom_upload and st.button("Load Prometheus time series"):
+        try:
+            prom_report=parse_upload(prom_upload.name,prom_upload.getvalue())
+            st.session_state.prometheus_timeseries=prom_report.timeseries
+            st.success(f"Loaded {len(prom_report.timeseries)} Prometheus time buckets.")
+        except Exception as exc: st.error(f"Unable to parse Prometheus export: {exc}")
+    apm_ts=st.session_state.get("newrelic_timeseries") or st.session_state.get("prometheus_timeseries",[])
+    st.write(f"Load-test time-series points: **{len(load_ts)}** · Server-side time-series points: **{len(apm_ts)}**")
     bucket=st.selectbox("Alignment bucket",["10s","30s","1min","5min"],index=2)
     if st.button("Align and correlate",type="primary"):
         result=correlate_timeseries(load_ts,apm_ts,bucket=bucket)
