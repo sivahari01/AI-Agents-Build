@@ -9,10 +9,12 @@ from analyzer.parsers import parse_upload
 from analyzer.bottlenecks import detect_bottlenecks
 from analyzer.correlation import correlate_timeseries
 from analyzer.workload import size_workload
+from analyzer.comparison import compare_reports
 from integrations.newrelic import NewRelicClient, NewRelicError
 from ai.agent import analyze_evidence, answer_question
 from ai.ollama import OllamaError
 from reports.generator import build_rca_html, json_export
+from reports.exporters import build_excel, build_pdf
 
 st.set_page_config(page_title="PerfAI | Super Performance Intelligence",page_icon="⚡",layout="wide")
 st.markdown("""
@@ -38,7 +40,7 @@ with st.sidebar:
     st.title("⚡ PerfAI")
     st.caption("Super Performance Intelligence Agent")
     page=st.radio("Workspace",["Overview","Report Analyzer","New Relic","Server-side Analysis",
-        "Correlation","Bottleneck Analysis","Workload Model","AI Assistant","RCA Report"])
+        "Correlation","Bottleneck Analysis","Workload Model","Compare Runs","AI Assistant","RCA Report"])
     st.divider()
     st.caption("Local AI")
     st.code(OLLAMA_MODEL)
@@ -222,6 +224,25 @@ elif page=="Workload Model":
         st.code(f"{result['formula']}\n{result['substitution'] or 'Calculation pending'}")
         st.json(result)
 
+elif page=="Compare Runs":
+    st.subheader("Compare two performance test runs")
+    st.caption("Use comparable test conditions. Differences in workload, environment, and test duration can affect interpretation.")
+    uploads=st.file_uploader("Upload baseline and candidate reports",type=["zip","html","htm","csv","jtl","xlsx","xls","json"],accept_multiple_files=True)
+    if uploads and st.button("Compare uploaded runs",type="primary",disabled=len(uploads)<2):
+        try:
+            baseline=parse_upload(uploads[0].name,uploads[0].getvalue()).model_dump()
+            candidate=parse_upload(uploads[1].name,uploads[1].getvalue()).model_dump()
+            st.session_state.run_comparison=compare_reports(baseline,candidate)
+            st.session_state.comparison_names=(uploads[0].name,uploads[1].name)
+        except Exception as exc: st.error(f"Comparison failed: {exc}")
+    comparison=st.session_state.get("run_comparison")
+    if comparison:
+        st.write(f"**Baseline:** {st.session_state.comparison_names[0]}  |  **Candidate:** {st.session_state.comparison_names[1]}")
+        if comparison["metrics"]: st.dataframe(pd.DataFrame(comparison["metrics"]),use_container_width=True,hide_index=True)
+        if comparison["transactions"]: st.dataframe(pd.DataFrame(comparison["transactions"]),use_container_width=True,hide_index=True)
+        for warning in comparison["warnings"]: st.warning(warning)
+        st.caption("Positive response-time/error deltas generally indicate degradation; positive throughput deltas may be beneficial. Interpret each metric in context.")
+
 elif page=="AI Assistant":
     st.subheader("Evidence-grounded performance assistant")
     if not report_data:
@@ -251,5 +272,9 @@ elif page=="RCA Report":
         st.download_button("Download RCA as HTML",html_report,file_name="perfai-rca.html",mime="text/html")
         st.download_button("Download RCA data as JSON",json_export(report_data,findings,corr),
             file_name="perfai-rca.json",mime="application/json")
+        st.download_button("Download RCA as Excel",build_excel(report_data,findings,corr),
+            file_name="perfai-rca.xlsx",mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        st.download_button("Download RCA as PDF",build_pdf(report_data,findings,corr),
+            file_name="perfai-rca.pdf",mime="application/pdf")
         st.caption("The RCA labels observations and hypotheses separately. Validate evidence before declaring root cause.")
         st.components.v1.html(html_report,height=650,scrolling=True)
