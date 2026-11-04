@@ -50,6 +50,8 @@ def parse_jmeter_frame(frame: pd.DataFrame, source="JMeter") -> NormalizedReport
     start=end=None; duration=None; ts=[]
     if timestamp:
         dates=pd.to_datetime(frame[timestamp],unit="ms",errors="coerce",utc=True)
+        if not dates.notna().any():
+            dates=pd.to_datetime(frame[timestamp],errors="coerce",utc=True)
         if dates.notna().any():
             frame["_time"]=dates
             start=dates.min().isoformat(); end=dates.max().isoformat()
