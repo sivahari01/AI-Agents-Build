@@ -228,8 +228,14 @@ if report:
                 "Workload type",
                 ["constant", "ramp", "step", "spike", "custom"],
             )
+            workload_scope = st.selectbox(
+                "Throughput scope",
+                ["transaction", "iteration"],
+                help="Transaction = business transactions/second. Iteration = complete user journeys/second (IPS).",
+            )
+            target_label = "Target transaction TPS" if workload_scope == "transaction" else "Target iteration rate (IPS)"
             target_tps = st.number_input(
-                "Target TPS",
+                target_label,
                 min_value=0.0,
                 value=None,
                 step=1.0,
@@ -243,16 +249,17 @@ if report:
                 placeholder="Optional",
             )
         with assumption_col:
-            think_time = st.number_input("Think time (seconds)", min_value=0.0, value=None, step=1.0, placeholder="Not measured")
-            pacing = st.number_input("Pacing (seconds)", min_value=0.0, value=None, step=1.0, placeholder="Not measured")
+            think_time = st.number_input("Total think time per iteration (seconds)", min_value=0.0, value=None, step=1.0, placeholder="Required for iteration scope")
+            pacing = st.number_input("Pacing per iteration (seconds)", min_value=0.0, value=None, step=1.0, placeholder="Enter 0 if no pacing")
 
         wlm = calculate_workload_recommendation(
             report,
-            target_tps=target_tps or None,
-            target_users=target_users or None,
-            think_time_s=think_time or None,
-            pacing_s=pacing or None,
+            target_tps=target_tps if target_tps is not None else None,
+            target_users=target_users if target_users is not None else None,
+            think_time_s=think_time if think_time is not None else None,
+            pacing_s=pacing if pacing is not None else None,
             workload_type=workload_type,
+            workload_scope=workload_scope,
         )
         recommended = wlm["recommended"]
         validation = wlm.get("validation", {
@@ -272,11 +279,12 @@ if report:
             st.error(" ".join(validation["errors"]))
         if st.button("Generate AI workload recommendation", type="primary"):
             prompt = (
-                f"Create a workload model for {target_tps or report.get('average_tps')} TPS "
-                f"using {target_users or report.get('max_virtual_users')} target users, "
+                f"Create a {workload_scope}-scope workload model for "
+                f"{target_tps if target_tps is not None else 'unspecified target rate'} "
+                f"using {target_users if target_users is not None else 'unspecified'} target users, "
                 f"workload type {workload_type}, think time "
-                f"{think_time if think_time else 'not provided'}, and pacing "
-                f"{pacing if pacing else 'not provided'}."
+                f"{think_time if think_time is not None else 'not provided'}, and pacing "
+                f"{pacing if pacing is not None else 'not provided'}."
             )
             try:
                 with st.spinner("Calculating and interpreting workload model..."):
