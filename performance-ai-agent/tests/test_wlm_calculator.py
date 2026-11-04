@@ -49,23 +49,60 @@ def test_wlm_questions_use_fast_local_calculation():
     assert "100.0" in output
 
 
-def test_littles_law_recommendation():
+def test_transaction_scope_excludes_think_time_and_pacing():
     result = calculate_workload_recommendation(
         {
             "average_tps": 10,
             "max_virtual_users": 20,
             "average_response_time_s": 2,
             "duration_seconds": 300,
-            "transactions": [{"name": "search", "execution_count": 80}],
+            "transactions": [{"name": "search", "execution_count": 80, "avg_response_time_s": 2}],
         },
         target_tps=20,
         think_time_s=3,
         pacing_s=1,
     )
-    assert result["recommended"]["required_vus"] == 120
-    assert result["transactions"][0]["mix_pct"] == 100
-    assert result["calculation"]["steps"][0]["substitution"] == "20 x (2 + 3 + 1)"
+    assert result["recommended"]["required_vus"] == 40
+    assert result["calculation"]["cycle_time_s"] == 2
+    assert "think_time_s" not in result["calculation"]["steps"][0]["inputs"]
 
+
+def test_iteration_scope_includes_think_time_and_pacing():
+    result = calculate_workload_recommendation(
+        {
+            "duration_seconds": 300,
+            "iteration_average_time_s": 2,
+            "transactions": [],
+        },
+        target_tps=20,
+        think_time_s=3,
+        pacing_s=1,
+        workload_scope="iteration",
+    )
+    assert result["recommended"]["required_vus"] == 120
+    assert result["calculation"]["cycle_time_s"] == 6
+    assert result["validation"]["valid"] is True
+
+
+def test_iteration_scope_requires_explicit_delays():
+    result = calculate_workload_recommendation(
+        {"duration_seconds": 300, "iteration_average_time_s": 2, "transactions": []},
+        target_tps=20,
+        workload_scope="iteration",
+    )
+    assert result["recommended"]["required_vus"] is None
+    assert result["validation"]["valid"] is False
+    assert "Total think time per iteration (seconds)" in result["validation"]["missing_requirements"]
+    assert "Pacing per iteration (seconds; enter 0 if none)" in result["validation"]["missing_requirements"]
+
+
+def test_zero_target_is_rejected():
+    result = calculate_workload_recommendation(
+        {"duration_seconds": 10, "transactions": [{"name": "a", "execution_count": 1, "avg_response_time_s": 1}]},
+        target_tps=0,
+    )
+    assert result["validation"]["valid"] is False
+    assert "Target throughput must be greater than zero." in result["validation"]["errors"]
 
 def test_weighted_mix_tps_and_validation():
     result = calculate_workload_recommendation(
