@@ -58,17 +58,18 @@ def parse_jmeter_frame(frame: pd.DataFrame, source="JMeter") -> NormalizedReport
             duration=max((dates.max()-dates.min()).total_seconds(),0.001)
             bucket=frame.set_index("_time").resample("10s").agg(samples=("_elapsed_ms","count"),avg_ms=("_elapsed_ms","mean"),errors=("_error","sum")).dropna(how="all")
             ts=[{"timestamp":idx.isoformat(),"requests":int(r.samples),"response_time_s":float(r.avg_ms/1000),"errors":int(r.errors)} for idx,r in bucket.iterrows()]
-    if duration is None: duration=float(frame["_elapsed_ms"].sum()/1000) if len(frame)>1 else None
     total=len(frame); failed=int(frame["_error"].sum())
-    users=int(frame[thread].nunique()) if thread else None
+    distinct_threads=int(frame[thread].nunique()) if thread else None
     return NormalizedReport(source=source,scenario_name="JMeter test",started_at=start,ended_at=end,
-        duration_seconds=duration,max_virtual_users=users,total_requests=total,failed_requests=failed,
+        duration_seconds=duration,max_virtual_users=None,total_requests=total,failed_requests=failed,
         error_rate_pct=failed/total*100 if total else None,average_response_time_s=float(frame["_elapsed_ms"].mean()/1000),
         p90_response_time_s=float(frame["_elapsed_ms"].quantile(.90)/1000),
         p95_response_time_s=float(frame["_elapsed_ms"].quantile(.95)/1000),
         p99_response_time_s=float(frame["_elapsed_ms"].quantile(.99)/1000),
-        average_tps=total/duration if duration and duration>0 else None,transactions=tx,timeseries=ts,
-        warnings=["JMeter duration is derived from timestamps when present; otherwise elapsed-time sum is only an approximation."])
+        average_rps=total/duration if duration and duration>0 else None,transactions=tx,timeseries=ts,
+        warnings=["Concurrent VUs are not inferred from total distinct JMeter thread names.",
+                  "Test duration and throughput are unavailable when usable timestamps are absent."] ,
+        raw_metadata={"distinct_thread_names":distinct_threads})
 
 def parse_json_report(data: bytes, filename="report.json") -> NormalizedReport:
     obj=json.loads(data.decode("utf-8-sig"))
