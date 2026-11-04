@@ -1,5 +1,6 @@
 from __future__ import annotations
 import csv, io, json, re, zipfile
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 import pandas as pd
@@ -70,6 +71,23 @@ def parse_jmeter_frame(frame: pd.DataFrame, source="JMeter") -> NormalizedReport
 def parse_json_report(data: bytes, filename="report.json") -> NormalizedReport:
     obj=json.loads(data.decode("utf-8-sig"))
     if isinstance(obj,list): obj={"samples":obj}
+    # Prometheus range-query JSON export: preserve each metric series as its own numeric column.
+    prom=obj.get("data",{}) if isinstance(obj,dict) else {}
+    if obj.get("status")=="success" and isinstance(prom.get("result"),list):
+        buckets={}
+        for series in prom["result"]:
+            labels=series.get("metric",{})
+            metric_name=labels.get("__name__") or labels.get("job") or labels.get("instance") or "prometheus_value"
+            safe_name=re.sub(r"[^A-Za-z0-9_]+","_",str(metric_name)).strip("_") or "prometheus_value"
+            for point in series.get("values",[]):
+                if len(point)<2: continue
+                try:
+                    stamp=datetime.fromtimestamp(float(point[0]),tz=timezone.utc).isoformat()
+                    buckets.setdefault(stamp,{"timestamp":stamp})[safe_name]=_num(point[1])
+                except (ValueError,TypeError,OverflowError): continue
+        rows=sorted(buckets.values(),key=lambda x:x["timestamp"])
+        return NormalizedReport(source="Prometheus JSON",scenario_name=filename,timeseries=rows,
+            warnings=["Prometheus range-query data contains infrastructure telemetry, not load-test transactions."])
     txraw=obj.get("transactions",[])
     tx=[]
     for row in txraw if isinstance(txraw,list) else []:
