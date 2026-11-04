@@ -138,7 +138,7 @@ def parse_upload(filename: str, data: bytes) -> NormalizedReport:
         with zipfile.ZipFile(io.BytesIO(data)) as zf:
             candidates=[n for n in zf.namelist() if n.lower().endswith((".html",".htm")) and not n.endswith("/")]
             if not candidates: raise ValueError("ZIP contains no HTML report.")
-            preferred=next((n for n in candidates if Path(n).name.lower() in {"index.html","summary.html"}),candidates[0])
+            preferred=next((n for n in candidates if Path(n).name.lower()=="summary.html"),None) or next((n for n in candidates if Path(n).name.lower()=="index.html"),candidates[0])
             return parse_neoload_html(zf.read(preferred).decode("utf-8",errors="replace"),preferred)
     if suffix in {".log",".txt"}:
         lines=data.decode("utf-8",errors="replace").splitlines()
