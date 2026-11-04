@@ -144,6 +144,8 @@ elif page == "New Relic":
             try:
                 start_utc=pd.Timestamp(start).tz_localize("UTC") if pd.Timestamp(start).tzinfo is None else pd.Timestamp(start).tz_convert("UTC")
                 end_utc=pd.Timestamp(end).tz_localize("UTC") if pd.Timestamp(end).tzinfo is None else pd.Timestamp(end).tz_convert("UTC")
+                if end_utc <= start_utc:
+                    raise ValueError("End time must be later than start time.")
                 since=f"{max(1,int((end_utc-start_utc).total_seconds()/60))} minutes ago"
                 query_list=build_metric_queries(entity["guid"],st.session_state.nr_discovered_keys,since)
                 points=[]
