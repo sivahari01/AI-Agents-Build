@@ -59,6 +59,114 @@ section{margin:34px 0}.section-head{display:flex;justify-content:space-between;a
 <div class="panel tip"><b>🎯 Choose the right load</b><p>Use a weight you can control through the full range without swinging.</p></div>
 <div class="panel tip"><b>🛌 Recover well</b><p>Sleep, hydrate and eat enough protein to support muscle recovery.</p></div>
 </div><p class="note">Stop if you feel sharp pain, dizziness or unusual discomfort. If you are new to strength training, begin with 2 sets per exercise and progress only when recovery and technique are good.</p></section>
+
+<style>
+/* Workout journal */
+.journal{padding:20px}.journal-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.calendar-panel,.log-panel{background:linear-gradient(145deg,#172438,#111b2a);border:1px solid var(--line);border-radius:var(--radius);padding:18px;min-width:0}.calendar-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.calendar-top h3{margin:0}.calendar-top button,.journal button{border:1px solid var(--line);background:#22334a;color:var(--text);border-radius:9px;padding:8px 12px;cursor:pointer}.calendar-top button:hover,.journal button:hover{border-color:var(--accent)}.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.calendar-grid .weekday{text-align:center;color:var(--muted);font-size:11px;padding:5px 0}.calendar-day{min-height:48px!important;padding:6px 2px!important;position:relative;font-size:13px}.calendar-day.muted{opacity:.3}.calendar-day.selected{background:var(--accent);color:#111827;border-color:var(--accent)}.calendar-day.has-log:after{content:'';position:absolute;width:5px;height:5px;border-radius:50%;background:var(--accent);bottom:4px;left:calc(50% - 2px)}.calendar-day.selected.has-log:after{background:#111827}.selected-date{color:var(--accent);font-weight:800;margin:0 0 12px}.journal label{display:block;font-size:12px;color:var(--muted);margin:10px 0 5px}.journal input,.journal select,.journal textarea{width:100%;padding:10px;border-radius:9px;border:1px solid var(--line);background:#0d1726;color:var(--text);font:inherit}.journal input:focus,.journal select:focus,.journal textarea:focus{outline:1px solid var(--accent)}.exercise-entry{display:grid;grid-template-columns:1.5fr .7fr .7fr .8fr auto;gap:7px;align-items:end;margin:8px 0}.exercise-entry button{padding:9px}.journal-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.journal .save-btn{background:var(--accent);color:#101827;border-color:var(--accent);font-weight:800}.saved-list{margin-top:18px}.saved-item{padding:12px 0;border-bottom:1px solid var(--line)}.saved-item strong{color:var(--accent)}.saved-item p{margin:4px 0;color:var(--muted);font-size:13px}.empty-state{color:var(--muted);font-size:13px;padding:12px 0}.storage-hint{font-size:11px;color:var(--muted);margin-top:12px}.journal-status{font-size:12px;color:var(--accent);min-height:18px;margin-top:8px}
+@media(max-width:760px){.journal-grid{grid-template-columns:1fr}.exercise-entry{grid-template-columns:1fr 1fr}.exercise-entry input:first-child{grid-column:1/-1}.exercise-entry button{grid-column:2}.calendar-day{min-height:42px!important}}
+</style>
+<section class="journal" id="workout-journal">
+ <div class="section-head"><h2>Workout calendar & notes</h2><p>Log each session and track your sets</p></div>
+ <div class="journal-grid">
+  <div class="calendar-panel">
+   <div class="calendar-top"><button type="button" id="prev-month" aria-label="Previous month">‹</button><h3 id="calendar-month"></h3><button type="button" id="next-month" aria-label="Next month">›</button></div>
+   <div class="calendar-grid" id="calendar-grid"></div>
+   <p class="storage-hint">A dot marks a date with a saved workout.</p>
+  </div>
+  <div class="log-panel">
+   <p class="selected-date" id="selected-date"></p>
+   <label for="workout-type">Workout / muscle group</label>
+   <select id="workout-type"><option value="Legs">Legs</option><option value="Back">Back</option><option value="Lats">Lats</option><option value="Shoulders">Shoulders</option><option value="Chest">Chest</option><option value="Arms">Arms</option><option value="Core">Core</option><option value="Full body">Full body</option><option value="Recovery">Recovery</option><option value="Other">Other</option></select>
+   <label>Exercises, sets, reps and weight (kg)</label>
+   <div id="exercise-rows"></div>
+   <button type="button" id="add-exercise">+ Add exercise</button>
+   <label for="workout-notes">Workout notes</label>
+   <textarea id="workout-notes" rows="3" placeholder="Example: Good form today. Increase weight next session."></textarea>
+   <div class="journal-actions"><button type="button" class="save-btn" id="save-workout">Save workout</button><button type="button" id="clear-form">Clear form</button></div>
+   <div class="journal-status" id="journal-status" aria-live="polite"></div>
+  </div>
+ </div>
+ <div class="saved-list"><h3>Saved workout for this date</h3><div id="saved-workouts" class="empty-state">No workout saved for this date yet.</div></div>
+ <p class="storage-hint">Your workout notes are saved in this browser on this device (local storage). They are not synced to GitHub or other devices.</p>
+</section>
+<script>
+(function(){
+ const STORE_KEY='homeWorkoutJournal_v1';
+ const grid=document.getElementById('calendar-grid');
+ const monthLabel=document.getElementById('calendar-month');
+ const dateLabel=document.getElementById('selected-date');
+ const rows=document.getElementById('exercise-rows');
+ const notes=document.getElementById('workout-notes');
+ const type=document.getElementById('workout-type');
+ const status=document.getElementById('journal-status');
+ const saved=document.getElementById('saved-workouts');
+ const today=new Date();
+ let viewMonth=new Date(today.getFullYear(),today.getMonth(),1);
+ let selectedDate=toKey(today);
+ let workouts=readStore();
+
+ function toKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+ function fromKey(s){const p=s.split('-').map(Number);return new Date(p[0],p[1]-1,p[2]);}
+ function readStore(){try{return JSON.parse(localStorage.getItem(STORE_KEY)||'{}')||{};}catch(e){return {};}}
+ function writeStore(){try{localStorage.setItem(STORE_KEY,JSON.stringify(workouts));return true;}catch(e){status.textContent='Could not save. Browser storage may be disabled or full.';return false;}}
+ function renderCalendar(){
+  grid.innerHTML='';
+  ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(function(day){const el=document.createElement('div');el.className='weekday';el.textContent=day;grid.appendChild(el);});
+  monthLabel.textContent=viewMonth.toLocaleDateString(undefined,{month:'long',year:'numeric'});
+  const first=new Date(viewMonth.getFullYear(),viewMonth.getMonth(),1);
+  const offset=(first.getDay()+6)%7;
+  const start=new Date(first);start.setDate(first.getDate()-offset);
+  for(let i=0;i<42;i++){
+   const d=new Date(start);d.setDate(start.getDate()+i);
+   const key=toKey(d),b=document.createElement('button');
+   b.type='button';b.className='calendar-day'+(d.getMonth()!==viewMonth.getMonth()?' muted':'')+(key===selectedDate?' selected':'')+(workouts[key]&&workouts[key].length?' has-log':'');
+   b.textContent=d.getDate();b.setAttribute('aria-label',d.toDateString());
+   b.addEventListener('click',function(){selectedDate=key;renderCalendar();loadDate();});
+   grid.appendChild(b);
+  }
+ }
+ function addExerciseRow(data){
+  const row=document.createElement('div');row.className='exercise-entry';
+  const fields=[['Exercise name','text',data&&data.name||''],['Sets','number',data&&data.sets||''],['Reps','text',data&&data.reps||''],['Weight kg','number',data&&data.weight||'']];
+  fields.forEach(function(f){const input=document.createElement('input');input.type=f[1];input.placeholder=f[0];input.setAttribute('aria-label',f[0]);if(f[1]==='number'){input.min='0';input.step='0.5';}input.value=f[2];row.appendChild(input);});
+  const remove=document.createElement('button');remove.type='button';remove.textContent='×';remove.setAttribute('aria-label','Remove exercise');remove.addEventListener('click',function(){row.remove();});row.appendChild(remove);
+  rows.appendChild(row);
+ }
+ function clearForm(){rows.innerHTML='';addExerciseRow();notes.value='';type.value='Legs';}
+ function loadDate(){
+  dateLabel.textContent=fromKey(selectedDate).toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  status.textContent='';clearForm();
+  const entries=workouts[selectedDate]||[];
+  if(entries.length){const latest=entries[entries.length-1];type.value=latest.type||'Legs';notes.value=latest.notes||'';rows.innerHTML='';(latest.exercises||[]).forEach(addExerciseRow);}
+  renderSaved();
+ }
+ function renderSaved(){
+  saved.innerHTML='';const entries=workouts[selectedDate]||[];
+  if(!entries.length){saved.className='empty-state';saved.textContent='No workout saved for this date yet.';return;}
+  saved.className='';
+  entries.slice().reverse().forEach(function(entry,index){
+   const card=document.createElement('div');card.className='saved-item';
+   const title=document.createElement('strong');title.textContent=entry.type+' · '+(entry.time||'Saved workout');card.appendChild(title);
+   (entry.exercises||[]).forEach(function(ex){const p=document.createElement('p');p.textContent=ex.name+' — '+ex.sets+' sets × '+ex.reps+' reps'+(ex.weight?' · '+ex.weight+' kg':'');card.appendChild(p);});
+   if(entry.notes){const p=document.createElement('p');p.textContent='Note: '+entry.notes;card.appendChild(p);}
+   const del=document.createElement('button');del.type='button';del.textContent='Delete this entry';del.style.marginTop='8px';del.addEventListener('click',function(){const realIndex=entries.length-1-index;entries.splice(realIndex,1);if(!entries.length)delete workouts[selectedDate];writeStore();renderCalendar();renderSaved();status.textContent='Workout entry deleted.';});card.appendChild(del);saved.appendChild(card);
+  });
+ }
+ document.getElementById('prev-month').addEventListener('click',function(){viewMonth.setMonth(viewMonth.getMonth()-1);renderCalendar();});
+ document.getElementById('next-month').addEventListener('click',function(){viewMonth.setMonth(viewMonth.getMonth()+1);renderCalendar();});
+ document.getElementById('add-exercise').addEventListener('click',function(){addExerciseRow();});
+ document.getElementById('clear-form').addEventListener('click',function(){clearForm();status.textContent='Form cleared. Saved entries are unchanged.';});
+ document.getElementById('save-workout').addEventListener('click',function(){
+  const exercises=Array.from(rows.querySelectorAll('.exercise-entry')).map(function(row){const v=Array.from(row.querySelectorAll('input')).map(function(input){return input.value.trim();});return {name:v[0],sets:v[1],reps:v[2],weight:v[3]};}).filter(function(ex){return ex.name;});
+  if(!exercises.length&&!notes.value.trim()){status.textContent='Add an exercise or a note before saving.';return;}
+  if(!workouts[selectedDate])workouts[selectedDate]=[];
+  workouts[selectedDate].push({type:type.value,exercises:exercises,notes:notes.value.trim(),time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});
+  if(writeStore()){status.textContent='Workout saved for '+selectedDate+'.';renderCalendar();renderSaved();clearForm();}
+ });
+ renderCalendar();loadDate();
+})();
+</script>
+
 </main>
 <footer class="footer wrap">HOME DUMBBELL PLAN · 8 WEEKS · TRAIN WITH CONTROL, PROGRESS WITH PATIENCE</footer>
 </body></html>
